@@ -3,6 +3,15 @@ const readline = require("readline-sync");
 function createPlayer() {
   return {
     move: null,
+    score: 0,
+
+    updateScore() {
+      this.score += 1;
+    },
+
+    resetScore() {
+      this.score = 0;
+    }
   };
 }
 
@@ -10,8 +19,7 @@ function createComputer() {
   let playerObject = createPlayer();
 
   let computerObject = {
-    choose() {
-      const choices = ["rock", "paper", "scissors"];
+    choose(choices) {
       let randomIndex = Math.floor(Math.random() * choices.length);
       this.move = choices[randomIndex];
     },
@@ -23,13 +31,13 @@ function createComputer() {
 function createHuman() {
   let playerObject = createPlayer();
   let humanObject = {
-    choose() {
+    choose(choices) {
       let choice;
 
       while (true) {
-        console.log("Please choose rock, paper, or scissors:");
+        console.log(`Choose one: ${choices.join(', ')}`);
         choice = readline.question();
-        if (["rock", "paper", "scissors"].includes(choice)) break;
+        if (choices.includes(choice)) break;
         console.log("Sorr, invalid choice.");
       }
 
@@ -58,9 +66,51 @@ let compare = function (move1, move2) {
   // not yet implemented
 };
 
+// engine needs to compare moves and determine the winner
+
+const RESULTS = {
+  rock: {
+    beats: ['scissors', 'lizard'],
+    messages: {
+      scissors: "Rock crushed the Scissors",
+      lizard: "Rock crushed the Lizard"
+    }
+  },
+  scissors: {
+    beats: ['paper', 'lizard'],
+    messages: {
+      paper: "Scissors cut the Paper",
+      lizard: "Scissors decaptitated the Lizard"
+    }
+  },
+  paper: {
+    beats: ['rock', 'spock'],
+    messages: {
+      rock: "Paper covered the Rock",
+      spock: "Paper disproved Spock"
+    }
+  },
+  spock: {
+    beats: ['rock', 'scissors'],
+    messages: {
+      rock: "Spock vaporized the Rock",
+      scissors: "Spock smashed the Scissors"
+    }
+  },
+  lizard: {
+    beats: ['paper', 'spock'],
+    messages: {
+      paper: "Lizard ate the Paper",
+      spock: "Lizard poisoned Spock"
+    }
+  }
+};
+
 const RPSGAME = {
   human: createHuman(),
   computer: createComputer(),
+  results: RESULTS,
+  choices: ['rock', 'scissors', 'paper', 'spock', 'lizard'],
 
   displayWelcomeMessage() {
     console.log("Welcome to Rock, Paper, Scissors!");
@@ -70,28 +120,36 @@ const RPSGAME = {
     console.log("Thanks for playing Rock, Paper, Scissors. Goodbye!");
   },
 
+  compare(humanMove, computerMove) {
+    if (this.results[humanMove].beats.includes(computerMove)) {
+      this.human.updateScore();
+      return 'player';
+    } else if (this.results[computerMove].beats.includes(humanMove)) {
+      this.computer.updateScore();
+      return 'computer';
+    } else {
+      return 'tie';
+    }
+  },
+
   displayWinner() {
     let humanMove = this.human.move;
     let computerMove = this.computer.move;
+    let winner = this.compare(humanMove, computerMove);
+    console.log(`You chose: ${humanMove}`);
+    console.log(`The computer chose: ${computerMove}`);
 
-    console.log(`You chose: ${this.human.move}`);
-    console.log(`The computer chose: ${this.computer.move}`);
-
-    if (
-      (humanMove === "rock" && computerMove === "scissors") ||
-      (humanMove === "paper" && computerMove === "rock") ||
-      (humanMove === "scissors" && computerMove === "paper")
-    ) {
+    if (winner === 'player') {
       console.log("You win!");
-    } else if (
-      (humanMove === "rock" && computerMove === "paper") ||
-      (humanMove === "paper" && computerMove === "scissors") ||
-      (humanMove === "scissors" && computerMove === "rock")
-    ) {
+    } else if (winner === 'computer') {
       console.log("Computer Wins!");
     } else {
       console.log("It's a tie");
     }
+  },
+
+  displayScore() {
+    console.log(`Your score: ${this.human.score}, Computer score: ${this.computer.score}`);
   },
 
   playAgain() {
@@ -103,9 +161,10 @@ const RPSGAME = {
   play() {
     this.displayWelcomeMessage();
     while (true) {
-      this.human.choose();
-      this.computer.choose();
+      this.human.choose(this.choices);
+      this.computer.choose(this.choices);
       this.displayWinner();
+      this.displayScore();
       if (!this.playAgain()) break;
     }
 
