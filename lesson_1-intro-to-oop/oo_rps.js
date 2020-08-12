@@ -4,6 +4,7 @@ function createPlayer() {
   return {
     move: null,
     score: 0,
+    moves: [],
 
     updateScore() {
       this.score += 1;
@@ -11,6 +12,14 @@ function createPlayer() {
 
     resetScore() {
       this.score = 0;
+    },
+
+    addMoves() {
+      this.moves = [...this.moves, this.move];
+    },
+
+    resetMoves() {
+      this.moves = [];
     },
   };
 }
@@ -22,6 +31,7 @@ function createComputer() {
     choose(choices) {
       let randomIndex = Math.floor(Math.random() * choices.length);
       this.move = choices[randomIndex];
+      this.addMoves();
     },
   };
 
@@ -42,6 +52,7 @@ function createHuman() {
       }
 
       this.move = choice;
+      this.addMoves();
     },
   };
 
@@ -125,6 +136,9 @@ const RPSGAME = {
 
   displayMoves() {
     console.clear();
+    console.log(`Your choices: ${this.human.moves.join(", ")}`);
+    console.log(`Computer's choices: ${this.computer.moves.join(", ")}`);
+    console.log("-".repeat(100));
     console.log(`You chose: ${this.human.move}`);
     console.log(`The computer chose: ${this.computer.move}`);
   },
@@ -165,6 +179,13 @@ const RPSGAME = {
     return answer.toLowerCase()[0] === "y";
   },
 
+  reset() {
+    this.human.resetScore();
+    this.computer.resetScore();
+    this.computer.resetMoves();
+    this.human.resetMoves();
+  },
+
   play() {
     this.displayWelcomeMessage();
     while (true) {
@@ -177,8 +198,7 @@ const RPSGAME = {
       if (this.winner) {
         this.displayMatchWinner();
         if (!this.playAgain) break;
-        this.human.resetScore();
-        this.computer.resetScore();
+        this.reset();
       }
       if (!this.playAgain()) break;
     }
