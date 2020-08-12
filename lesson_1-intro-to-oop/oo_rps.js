@@ -11,7 +11,7 @@ function createPlayer() {
 
     resetScore() {
       this.score = 0;
-    }
+    },
   };
 }
 
@@ -35,7 +35,7 @@ function createHuman() {
       let choice;
 
       while (true) {
-        console.log(`Choose one: ${choices.join(', ')}`);
+        console.log(`Choose one: ${choices.join(", ")}`);
         choice = readline.question();
         if (choices.includes(choice)) break;
         console.log("Sorr, invalid choice.");
@@ -48,108 +48,110 @@ function createHuman() {
   return Object.assign(playerObject, humanObject);
 }
 
-function createMove() {
-  return {
-    // possible state: type of move (paper, rock, scissors)
-  };
-}
-
-function createRule() {
-  return {
-    // possible state? not clear whether rules need state
-  };
-}
-
-// Since we don't know where to put 'compare', let's define
-// it as an ordinary function.
-let compare = function (move1, move2) {
-  // not yet implemented
-};
-
-// engine needs to compare moves and determine the winner
-
 const RESULTS = {
   rock: {
-    beats: ['scissors', 'lizard'],
+    beats: ["scissors", "lizard"],
     messages: {
       scissors: "Rock crushed the Scissors",
-      lizard: "Rock crushed the Lizard"
-    }
+      lizard: "Rock crushed the Lizard",
+    },
   },
   scissors: {
-    beats: ['paper', 'lizard'],
+    beats: ["paper", "lizard"],
     messages: {
       paper: "Scissors cut the Paper",
-      lizard: "Scissors decaptitated the Lizard"
-    }
+      lizard: "Scissors decaptitated the Lizard",
+    },
   },
   paper: {
-    beats: ['rock', 'spock'],
+    beats: ["rock", "spock"],
     messages: {
       rock: "Paper covered the Rock",
-      spock: "Paper disproved Spock"
-    }
+      spock: "Paper disproved Spock",
+    },
   },
   spock: {
-    beats: ['rock', 'scissors'],
+    beats: ["rock", "scissors"],
     messages: {
       rock: "Spock vaporized the Rock",
-      scissors: "Spock smashed the Scissors"
-    }
+      scissors: "Spock smashed the Scissors",
+    },
   },
   lizard: {
-    beats: ['paper', 'spock'],
+    beats: ["paper", "spock"],
     messages: {
       paper: "Lizard ate the Paper",
-      spock: "Lizard poisoned Spock"
-    }
-  }
+      spock: "Lizard poisoned Spock",
+    },
+  },
 };
 
 const RPSGAME = {
   human: createHuman(),
   computer: createComputer(),
   results: RESULTS,
-  choices: ['rock', 'scissors', 'paper', 'spock', 'lizard'],
+  choices: ["rock", "scissors", "paper", "spock", "lizard"],
+  winner: null,
 
   displayWelcomeMessage() {
-    console.log("Welcome to Rock, Paper, Scissors!");
+    console.log(`Welcome to ${this.choices.join(", ")}!`);
   },
 
   displayGoodByeMessage() {
-    console.log("Thanks for playing Rock, Paper, Scissors. Goodbye!");
+    console.log(`Thanks for playing ${this.choices.join(", ")}.Goodbye!`);
   },
 
-  compare(humanMove, computerMove) {
+  compareMoves(humanMove, computerMove) {
     if (this.results[humanMove].beats.includes(computerMove)) {
       this.human.updateScore();
-      return 'player';
+      return "player";
     } else if (this.results[computerMove].beats.includes(humanMove)) {
       this.computer.updateScore();
-      return 'computer';
+      return "computer";
     } else {
-      return 'tie';
+      return "tie";
     }
   },
 
-  displayWinner() {
-    let humanMove = this.human.move;
-    let computerMove = this.computer.move;
-    let winner = this.compare(humanMove, computerMove);
-    console.log(`You chose: ${humanMove}`);
-    console.log(`The computer chose: ${computerMove}`);
+  compareScores(humanScore, computerScore) {
+    if (humanScore >= 5) {
+      return "player";
+    } else if (computerScore >= 5) {
+      return "computer";
+    } else {
+      return null;
+    }
+  },
 
-    if (winner === 'player') {
+  displayMoves() {
+    console.log(`You chose: ${this.human.move}`);
+    console.log(`The computer chose: ${this.computer.move}`);
+  },
+
+  displayWinner() {
+    console.clear();
+    let gameWinner = this.compareMoves(this.human.move, this.computer.move);
+    if (gameWinner === "player") {
       console.log("You win!");
-    } else if (winner === 'computer') {
+    } else if (gameWinner === "computer") {
       console.log("Computer Wins!");
     } else {
       console.log("It's a tie");
     }
   },
 
+  displayMatchWinner() {
+    if (this.winner === "player") {
+      console.log("You win the match!");
+    } else if (this.winner === "computer") {
+      console.log("Computer wins the match!");
+    }
+  },
+
   displayScore() {
-    console.log(`Your score: ${this.human.score}, Computer score: ${this.computer.score}`);
+    console.log(
+      `Your score: ${this.human.score}, Computer score: ${this.computer.score}`
+    );
   },
 
   playAgain() {
@@ -165,9 +167,15 @@ const RPSGAME = {
       this.computer.choose(this.choices);
       this.displayWinner();
       this.displayScore();
+      this.winner = this.compareScores(this.human.score, this.computer.score);
+      if (this.winner) {
+        this.displayMatchWinner();
+        if (!this.playAgain) break;
+        this.human.resetScore();
+        this.computer.resetScore();
+      }
       if (!this.playAgain()) break;
     }
-
     this.displayGoodByeMessage();
   },
 };
