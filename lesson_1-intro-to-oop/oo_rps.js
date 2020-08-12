@@ -124,16 +124,21 @@ const RPSGAME = {
   },
 
   displayMoves() {
+    console.clear();
     console.log(`You chose: ${this.human.move}`);
     console.log(`The computer chose: ${this.computer.move}`);
   },
 
   displayWinner() {
-    console.clear();
-    let gameWinner = this.compareMoves(this.human.move, this.computer.move);
+    let humanMove = this.human.move;
+    let computerMove = this.computer.move;
+    let gameWinner = this.compareMoves(humanMove, computerMove);
+
     if (gameWinner === "player") {
+      console.log(this.results[humanMove].messages[computerMove]);
       console.log("You win!");
     } else if (gameWinner === "computer") {
+      console.log(this.results[computerMove].messages[humanMove]);
       console.log("Computer Wins!");
     } else {
       console.log("It's a tie");
@@ -165,6 +170,7 @@ const RPSGAME = {
     while (true) {
       this.human.choose(this.choices);
       this.computer.choose(this.choices);
+      this.displayMoves();
       this.displayWinner();
       this.displayScore();
       this.winner = this.compareScores(this.human.score, this.computer.score);
