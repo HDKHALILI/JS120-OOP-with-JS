@@ -83,3 +83,17 @@ c: 4    // from foo
 ```
 
 The two loops only logs the same thing when the prototype chain deosn't contain any enumerable properties.
+
+6. How do you create an object that doesn't have a prototype? How can you determine whether an object has a prototype?
+
+You can create an object without a prototype by using `Object.create` and pass `null` as argument.
+
+```javascript
+let bareObject = Object.create(null);
+```
+
+You can check if an object has a prototype by using `Object.getPrototypeOf` and pass in the object as argument.
+
+```javascript
+Object.getPrototypeOf(bareObject); // if null then no prototype
+```
