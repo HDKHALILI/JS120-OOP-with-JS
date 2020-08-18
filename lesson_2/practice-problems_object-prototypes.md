@@ -36,3 +36,50 @@ console.log(baz.foo + qux.foo);
 
 --> logs `4`  
 This problem is smillar to problem 1. The distinction is `qux.foo = 2`. This time we are reassigning the `foo` property of the prototype. All changes to prototype are observed by the objects that have inherited it. This is because objects hold a reference to their prototype objects. Since `baz` doesn't have its own `foo` property, `baz.foo` returns `2`. `2 + 2` = `4`.
+
+4. completed in separate file: assign-property.js
+
+5. Consider the following two loops:
+
+```javascript
+for (let property in foo) {
+  console.log(`${property}: ${foo[property]}`);
+}
+```
+
+```javascript
+Object.keys(foo).forEach((property) => {
+  console.log(`${property}: ${foo[property]}`);
+});
+```
+
+If `foo` is an arbitrary object, will these loops always log the same results to the console? Explain why they do or do not. If they don't always log the same information, show an example of when the results differ.
+
+Answer:
+
+If the `foo` object has a prototype that contains enumerable properties the loops will produce different result. For example consider the following code:
+
+```javascript
+let bar = { a: 1, b: 2 };
+let foo = Object.create(bar);
+foo.a = 3;
+foo.c = 4;
+```
+
+`foo` has a prototype (`bar`).  
+The first (`for/in`) loop will log all properties that are object's own and those in the prototype chain. Therefore, It will log:
+
+```
+a: 3    // from foo
+c: 4    // from foo
+b: 2    // from bar
+```
+
+`Object.keys` returns an array of enumerable of object's own properties. Since `foo` only have `c` and `a` as its own properties, the second loop will log:
+
+```
+a: 3    // from foo
+c: 4    // from foo
+```
+
+The two loops only logs the same thing when the prototype chain deosn't contain any enumerable properties.
