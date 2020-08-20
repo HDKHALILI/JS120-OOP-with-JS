@@ -64,3 +64,25 @@ Answer:
 
 Answer:  
 The Function methods `call` and `apply` let us explicitly set the function execution context.
+
+5. Take a look at the following code snippet. Use `call` to invoke the `add` method but with `foo` as execution context. What will this return?
+
+```javascript
+let foo = {
+  a: 1,
+  b: 2,
+};
+
+let bar = {
+  a: "abc",
+  b: "def",
+  add: function () {
+    return this.a + this.b;
+  },
+};
+
+// calling add with foo as its "context"
+let sum = bar.add.call(foo); // 3
+```
+
+We invoked `call` on `bar.add` with `foo` as its explicit execution context (first argument of `call`), the `add` method uses `foo.a` and `foo.b` to determine the result, which is `1 + 2` = `3`.
