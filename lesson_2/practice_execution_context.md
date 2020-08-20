@@ -59,3 +59,8 @@ Answer:
 
 `message` variable is created without a keyword which sets it as a property of the global object. `deliverMessage` is invoked as a function, and its implicit execution context is the global object, therefore the function logs the value of `message`.  
 `foo.deliverMessage = deliverMessage` creates a property on the `foo` object and set it to reference the `deliverMessage` function. Now `foo` has a method called `deliverMessage`. Using the `foo` object to invoke the `deliverMessage` method logs the value of `foo.message` because the explicit execution context for the method is the `foo` object (the caller).
+
+4. What built-in methods have we learned about that we can use to specify a function's execution context explicitly?
+
+Answer:  
+The Function methods `call` and `apply` let us explicitly set the function execution context.
