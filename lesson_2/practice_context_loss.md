@@ -25,3 +25,28 @@ logReturnVal(turk.getDescription);
 Answer:  
 It logs: `'undefined undefined is a undefined.'`  
 When we pass `turk.getDescription` to `logReturnVal` we are striping it from its context. When we execute it as `func`, `this` is now the global object instead of `turk` object. Since the global object doesn't have the properties that `func` is trying to access, we get the output we didn't expect.
+
+2. Modify the program from the previous problem so that logReturnVal accepts an additional context argument. If you then run the program with turk as the context argument, it should produce the desired output.
+
+Answer:
+
+```javascript
+let turk = {
+  firstName: "Christopher",
+  lastName: "Turk",
+  occupation: "Surgeon",
+  getDescription() {
+    return (
+      this.firstName + " " + this.lastName + " is a " + this.occupation + "."
+    );
+  },
+};
+
+function logReturnVal(func, context) {
+  // we can use apply too
+  let returnVal = func.call(context);
+  console.log(returnVal);
+}
+
+logReturnVal(turk.getDescription, turk);
+```
