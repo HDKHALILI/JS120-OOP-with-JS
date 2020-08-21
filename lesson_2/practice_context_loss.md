@@ -64,3 +64,42 @@ function logReturnVal(func) {
 let turkDescription = turk.getDescription.bind(turk);
 logReturnVal(turkDescription);
 ```
+
+4. Consider the following code:
+
+```javascript
+const TESgames = {
+  titles: ["Arena", "Daggerfall", "Morrowind", "Oblivion", "Skyrim"],
+  seriesTitle: "The Elder Scrolls",
+  listGames: function () {
+    this.titles.forEach(function (title) {
+      console.log(this.seriesTitle + ": " + title);
+    });
+  },
+};
+
+TESgames.listGames();
+```
+
+Will this code produce the following output? Why or why not?
+
+```
+The Elder Scrolls: Arena
+The Elder Scrolls: Daggerfall
+The Elder Scrolls: Morrowind
+The Elder Scrolls: Oblivion
+The Elder Scrolls: Skyrim
+```
+
+Answer:  
+No, it will not produce the above output. Instead we get this:
+
+```
+undefined: Arena
+undefined: Daggerfall
+undefined: Morrowind
+undefined: Oblivion
+undefined: Skyrim
+```
+
+Since functions lose their surrounding context when used as arguments to another function, the context of the function passed to `forEach` is not the TESgames object. Instead, it is the global object. Thus, this.seriesTitle resolves to undefined rather than "The Elder Scrolls".
