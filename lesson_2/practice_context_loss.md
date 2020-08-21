@@ -50,3 +50,17 @@ function logReturnVal(func, context) {
 
 logReturnVal(turk.getDescription, turk);
 ```
+
+3. Suppose that we want to extract getDescription from turk, but we always want it to execute with turk as its execution context. How would you modify your code to do that?
+
+Answer:
+
+```javascript
+function logReturnVal(func) {
+  let returnVal = func();
+  console.log(returnVal);
+}
+
+let turkDescription = turk.getDescription.bind(turk);
+logReturnVal(turkDescription);
+```
