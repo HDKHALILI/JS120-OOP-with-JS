@@ -103,3 +103,85 @@ undefined: Skyrim
 ```
 
 Since functions lose their surrounding context when used as arguments to another function, the context of the function passed to `forEach` is not the TESgames object. Instead, it is the global object. Thus, this.seriesTitle resolves to undefined rather than "The Elder Scrolls".
+
+5. Use let self = this; to ensure that TESgames.listGames uses TESGames as its context and logs the proper output.
+
+```javascript
+const TESgames = {
+  titles: ["Arena", "Daggerfall", "Morrowind", "Oblivion", "Skyrim"],
+  seriesTitle: "The Elder Scrolls",
+  listGames: function () {
+    let self = this.this.titles.forEach(function (title) {
+      console.log(self.seriesTitle + ": " + title);
+    });
+  },
+};
+```
+
+6. The forEach method provides an alternative way to supply the execution context for the callback function. Modify the program from the previous problem to use that technique to produce the proper output:
+
+```javascript
+const TESgames = {
+  titles: ["Arena", "Daggerfall", "Morrowind", "Oblivion", "Skyrim"],
+  seriesTitle: "The Elder Scrolls",
+  listGames: function () {
+    this.titles.forEach(function (title) {
+      console.log(this.seriesTitle + ": " + title);
+    }, this);
+  },
+};
+```
+
+7. Use an arrow function to achieve the same result:
+
+```javascript
+const TESgames = {
+  titles: ["Arena", "Daggerfall", "Morrowind", "Oblivion", "Skyrim"],
+  seriesTitle: "The Elder Scrolls",
+  listGames: function () {
+    this.titles.forEach((title) => {
+      console.log(this.seriesTitle + ": " + title);
+    });
+  },
+};
+```
+
+8. Consider the following code:
+
+```javascript
+let foo = {
+  a: 0,
+  incrementA: function () {
+    function increment() {
+      this.a += 1;
+    }
+
+    increment();
+  },
+};
+
+foo.incrementA();
+foo.incrementA();
+foo.incrementA();
+```
+
+What will the value of foo.a be after this code runs?  
+Answer:  
+The value of `foo.a` will be `0`. Sinc `increment` is executed as a function, context is the global object, `this.a` references a property of the global object rather than property of `foo`.
+
+10. Use one of the methods we learned in this lesson to invoke `increment` with an explicit context such that `foo.a` gets incremented with each invocation of `incrementA`.
+
+Answer:
+
+```javascript
+let foo = {
+  a: 0,
+  incrementA: function () {
+    function increment() {
+      this.a += 1;
+    }
+
+    increment.call(foo);
+  },
+};
+```
