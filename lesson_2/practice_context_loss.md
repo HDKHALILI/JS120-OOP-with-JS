@@ -111,7 +111,8 @@ const TESgames = {
   titles: ["Arena", "Daggerfall", "Morrowind", "Oblivion", "Skyrim"],
   seriesTitle: "The Elder Scrolls",
   listGames: function () {
-    let self = this.this.titles.forEach(function (title) {
+    let self = this;
+    this.titles.forEach(function (title) {
       console.log(self.seriesTitle + ": " + title);
     });
   },
@@ -181,7 +182,7 @@ let foo = {
       this.a += 1;
     }
 
-    increment.call(foo);
+    increment.call(this);
   },
 };
 ```
