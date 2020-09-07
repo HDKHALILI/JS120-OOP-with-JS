@@ -81,3 +81,134 @@ console.log(a.area().toFixed(2)); // => 28.27
 console.log(b.area().toFixed(2)); // => 50.27
 console.log(a.hasOwnProperty("area")); // => false
 ```
+
+4. What will the following code log to the console and why?
+
+```javascript
+function Ninja() {
+  this.swung = true;
+}
+
+let ninja = new Ninja();
+
+Ninja.prototype.swingSword = function () {
+  return this.swung;
+};
+
+console.log(ninja.swingSword());
+```
+
+Answer:
+
+```javascript
+true;
+```
+
+All objects created with `Ninja` constructor shares the same prototype object and when we define `swingSword`, it immediately becomes available to the `ninja` object.
+
+5. What will the following code output and why? Try to answer without running the code.
+
+```javascript
+function Ninja() {
+  this.swung = true;
+}
+
+let ninja = new Ninja();
+
+Ninja.prototype = {
+  swingSword: function () {
+    return this.swung;
+  },
+};
+
+console.log(ninja.swingSword());
+```
+
+Answer:
+
+```javascript
+Uncaught TypeError: ninja.swingSword is not a function
+```
+
+We are reassigning the `Ninja`'s prototype instead of adding a property on it. The instance `ninja` still has the original prototype defined during `Ninja` invocation. If we create the instance after the reassignment it would not give error.
+
+6. Implement the method described in the comments below:
+
+```javascript
+function Ninja() {
+  this.swung = false;
+}
+
+// Add a swing method to the Ninja prototype which
+// modifies `swung` and returns the calling object
+
+let ninjaA = new Ninja();
+let ninjaB = new Ninja();
+
+console.log(ninjaA.swing().swung); // logs `true`
+console.log(ninjaB.swing().swung); // logs `true`
+```
+
+Answer:
+
+```javascript
+Ninja.prototype.swing = function () {
+  this.swung = true;
+  // returning the context object
+  return this;
+};
+```
+
+7. In this problem, we'll ask you to create a new instance of an object, without having direct access to the constructor function:
+
+```javascript
+let ninjaA;
+
+{
+  const Ninja = function () {
+    this.swung = false;
+  };
+
+  ninjaA = new Ninja();
+}
+
+// create a `ninjaB` object here; don't change anything else
+
+ninjaA.constructor === ninjaB.constructor; // => true
+```
+
+Answer:
+
+```javascript
+let ninjaB = new ninjaA.constructor();
+```
+
+8. Since a constructor is just a function, you can call it without the `new` operator. However, that can lead to unexpected results and errors, especially for inexperienced programmers. Write a constructor function that you can use with or without the `new` operator. The function should return the same result with either form. Use the code below to check your solution:
+
+```javascript
+function User(first, last) {
+  // ...
+}
+
+let name = "Jane Doe";
+let user1 = new User("John", "Doe");
+let user2 = User("John", "Doe");
+
+console.log(name); // => Jane Doe
+console.log(user1.name); // => John Doe
+console.log(user2.name); // => John Doe
+```
+
+Answer:
+
+```javascript
+function User(first, last) {
+  if (!(this instanceof User)) {
+    return new User(first, last);
+  }
+
+  this.name = first + " " + last;
+}
+```
+
+In the above code we are checking if `this` is created by the `User` constructor. Constructor functions built this way is called **scope-safe constructors**.
