@@ -18,6 +18,10 @@ class Square {
   isUnused() {
     return this.marker === Square.UNUSED_SQUARE;
   }
+
+  getMarker() {
+    return this.marker;
+  }
 }
 
 class Board {
@@ -62,12 +66,13 @@ class Board {
   isFull() {
     return this.unusedSquares().length === 0;
   }
-}
 
-class Row {
-  constructor() {
-    //STUB
-    // We need some way to identify a row of 3 squares
+  countMarkersFor(player, keys) {
+    let markers = keys.filter((key) => {
+      return this.squares[key].getMarker() === player.marker;
+    });
+
+    return markers.length;
   }
 }
 
@@ -96,6 +101,17 @@ class Computer extends Player {
 let readline = require("readline-sync");
 
 class TTTGame {
+  static POSSIBLE_WINNING_ROWS = [
+    ["1", "2", "3"], // top row of board
+    ["4", "5", "6"], // center row of board
+    ["7", "8", "9"], // bottom row of board
+    ["1", "4", "7"], // left column of board
+    ["2", "5", "8"], // middle column of board
+    ["3", "6", "9"], // right column of board
+    ["1", "5", "9"], // diagonal: top-left to bottom-right
+    ["3", "5", "7"], // diagonal: bottom-left to top-right
+  ];
+
   constructor() {
     this.board = new Board();
     this.human = new Human();
@@ -129,8 +145,19 @@ class TTTGame {
   }
 
   displayResults() {
-    // STUB
-    // display the board, including its current state
+    if (this.isWinner(this.human)) {
+      console.log("You won! Congratulations!");
+    } else if (this.isWinner(this.computer)) {
+      console.log("I won! I won! Take that human!");
+    } else {
+      console.log("A tie game. How boring.");
+    }
+  }
+
+  isWinner(player) {
+    return TTTGame.POSSIBLE_WINNING_ROWS.some((row) => {
+      return this.board.countMarkersFor(player, row) === 3;
+    });
   }
 
   humanMoves() {
@@ -166,7 +193,7 @@ class TTTGame {
   }
 
   someOneWon() {
-    return false;
+    return this.isWinner(this.human) || this.isWinner(this.computer);
   }
 }
 
