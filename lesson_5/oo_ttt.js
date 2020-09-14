@@ -1,16 +1,45 @@
-class Board {
-  constructor() {
-    //STUB - we'll talk about stubs a bit later
-    // We need a way to model the 3x3 grid. Perhaps "squares"?
-    // What data structure should we use? An Array? An Object? Something else?
-    // What should the data structure store? Strings? Numbers? Square objects?
+class Square {
+  static UNUSED_SQUARE = " ";
+  static HUMAN_MARKER = "X";
+  static COMPUTER_MARKER = "O";
+
+  constructor(marker = Square.UNUSED_SQUARE) {
+    this.marker = marker;
+  }
+
+  toString() {
+    return this.marker;
   }
 }
 
-class Square {
+class Board {
   constructor() {
-    //STUB
-    // We need some way to keep track of this square's marker.
+    this.squares = {};
+    for (let counter = 1; counter <= 9; counter += 1) {
+      this.squares[String(counter)] = new Square();
+    }
+  }
+
+  display() {
+    console.log("");
+    console.log("     |     |");
+    console.log(
+      `  ${this.squares["1"]}  |  ${this.squares["2"]}  |  ${this.squares["3"]}`
+    );
+    console.log("     |     |");
+    console.log("-----+-----+-----");
+    console.log("     |     |");
+    console.log(
+      `  ${this.squares["4"]}  |  ${this.squares["5"]}  |  ${this.squares["6"]}`
+    );
+    console.log("     |     |");
+    console.log("-----+-----+-----");
+    console.log("     |     |");
+    console.log(
+      `  ${this.squares["7"]}  |  ${this.squares["8"]}  |  ${this.squares["1"]}`
+    );
+    console.log("     |     |");
+    console.log("");
   }
 }
 
@@ -61,13 +90,56 @@ class Computer extends Player {
 
 class TTTGame {
   constructor() {
-    // STUB
-    // Need a board and two players
+    this.board = new Board();
   }
 
   play() {
+    // SPIKE
+    this.displayWelcomeMessage();
+
+    while (true) {
+      this.board.display();
+
+      this.firstPlayerMoves();
+      if (this.gameOver()) break;
+
+      this.secondPlayerMoves();
+      if (this.gameOver()) break;
+
+      // temporary break
+      break;
+    }
+
+    this.displayResults();
+    this.displayGoodbyeMessage();
+  }
+
+  displayWelcomeMessage() {
+    console.log("Welcome to Tic Tac Toe!");
+  }
+
+  displayGoodbyeMessage() {
+    console.log("Thanks for playing Tic Tac Toe! Goodbye!");
+  }
+
+  displayResults() {
     // STUB
-    // orchestrate game play
+    // display the board, including its current state
+  }
+
+  firstPlayerMoves() {
+    // STUB
+    // the first player makes a move
+  }
+
+  secondPlayerMoves() {
+    // STUB
+    // the second player makes a move
+  }
+
+  gameOver() {
+    // STUB
+    return false;
   }
 }
 
