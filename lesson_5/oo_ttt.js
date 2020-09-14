@@ -58,6 +58,10 @@ class Board {
     let keys = Object.keys(this.squares);
     return keys.filter((key) => this.squares[key].isUnused());
   }
+
+  isFull() {
+    return this.unusedSquares().length === 0;
+  }
 }
 
 class Row {
@@ -158,7 +162,10 @@ class TTTGame {
   }
 
   gameOver() {
-    // STUB
+    return this.board.isFull() || this.someOneWon();
+  }
+
+  someOneWon() {
     return false;
   }
 }
