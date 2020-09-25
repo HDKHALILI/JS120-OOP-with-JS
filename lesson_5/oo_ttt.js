@@ -152,6 +152,7 @@ class TTTGame {
     this.board = new Board();
     this.human = new Human();
     this.computer = new Computer();
+    this.firstPlayer = this.human;
   }
 
   play() {
@@ -163,14 +164,14 @@ class TTTGame {
   playOneGame() {
     this.board.reset();
     this.board.display();
-    while (true) {
-      this.humanMoves();
-      if (this.gameOver()) break;
+    let currentPlayer = this.firstPlayer;
 
-      this.computerMoves();
+    while (true) {
+      this.playerMoves(currentPlayer);
       if (this.gameOver()) break;
 
       this.board.displayWithClear();
+      currentPlayer = this.togglePlayer(currentPlayer);
     }
 
     this.board.displayWithClear();
@@ -188,9 +189,22 @@ class TTTGame {
       this.displayMatchScore();
 
       if (this.matchOver() || !this.playAgain()) break;
+      this.firstPlayer = this.togglePlayer(this.firstPlayer);
     }
 
     this.displayMatchResults();
+  }
+
+  playerMoves(currentPlayer) {
+    if (currentPlayer === this.human) {
+      this.humanMoves();
+    } else {
+      this.computerMoves();
+    }
+  }
+
+  togglePlayer(player) {
+    return player === this.human ? this.computer : this.human;
   }
 
   playAgain() {
