@@ -239,15 +239,29 @@ class TTTGame {
     }
 
     if (!choice) {
-      let validChoices = this.board.unusedSquares();
+      choice = this.pickCenterSquare();
+    }
 
-      do {
-        let randomNum = 9 * Math.random();
-        choice = Math.floor(randomNum + 1).toString();
-      } while (!validChoices.includes(choice));
+    if (!choice) {
+      choice = this.pickRandomSquare();
     }
 
     this.board.markSquareAt(choice, this.computer.getMarker());
+  }
+
+  pickCenterSquare() {
+    return this.board.isUnusedSquare("5") ? "5" : null;
+  }
+
+  pickRandomSquare() {
+    let validChoices = this.board.unusedSquares();
+    let choice;
+    do {
+      let randomNum = 9 * Math.random();
+      choice = Math.floor(randomNum + 1).toString();
+    } while (!validChoices.includes(choice));
+
+    return choice;
   }
 
   defensiveComputerMove() {
