@@ -92,10 +92,19 @@ class Board {
 class Player {
   constructor(marker) {
     this.marker = marker;
+    this.score = 0;
   }
 
   getMarker() {
     return this.marker;
+  }
+
+  getScore() {
+    return this.score;
+  }
+
+  incrementSore() {
+    this.score += 1;
   }
 }
 
@@ -125,6 +134,8 @@ class TTTGame {
     ["3", "5", "7"], // diagonal: bottom-left to top-right
   ];
 
+  static MATCH_GOAL = 3;
+
   static joinOr(choices, separator = ", ", conjunction = "or") {
     if (choices.length === 1) {
       return choices[0].toString();
@@ -145,14 +156,7 @@ class TTTGame {
 
   play() {
     this.displayWelcomeMessage();
-
-    while (true) {
-      this.playOneGame();
-      if (!this.playAgain()) break;
-
-      console.log("Let's play again!");
-    }
-
+    this.playMatch();
     this.displayGoodbyeMessage();
   }
 
@@ -171,6 +175,22 @@ class TTTGame {
 
     this.board.displayWithClear();
     this.displayResults();
+  }
+
+  playMatch() {
+    console.log(
+      `First player to win ${TTTGame.MATCH_GOAL} games wins the match`
+    );
+
+    while (true) {
+      this.playOneGame();
+      this.updateMatchScore();
+      this.displayMatchScore();
+
+      if (this.matchOver() || !this.playAgain()) break;
+    }
+
+    this.displayMatchResults();
   }
 
   playAgain() {
@@ -212,6 +232,38 @@ class TTTGame {
     return TTTGame.POSSIBLE_WINNING_ROWS.some(row => {
       return this.board.countMarkersFor(player, row) === 3;
     });
+  }
+
+  matchOver() {
+    return this.isMatchWinner(this.human) || this.isMatchWinner(this.computer);
+  }
+
+  isMatchWinner(player) {
+    return player.getScore() >= TTTGame.MATCH_GOAL;
+  }
+
+  updateMatchScore() {
+    if (this.isWinner(this.human)) {
+      this.human.incrementSore();
+    } else if (this.isWinner(this.computer)) {
+      this.computer.incrementSore();
+    }
+  }
+
+  displayMatchScore() {
+    let human = this.human.getScore();
+    let computer = this.computer.getScore();
+    console.log(
+      `Current Match Score: [You: ${human}]   [Computer: ${computer}]`
+    );
+  }
+
+  displayMatchResults() {
+    if (this.human.getScore() > this.computer.getScore()) {
+      console.log("You won this match! Congratulations!");
+    } else if (this.human.getScore() < this.computer.getScore()) {
+      console.log("Oh, boo hoo. You lost the match!");
+    }
   }
 
   humanMoves() {
